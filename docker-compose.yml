@@ -1,0 +1,68 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-demo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demo}
+      POSTGRES_DB: ${POSTGRES_DB:-transcription_demo}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ${POSTGRES_DB:-transcription_demo}
+      DATABASE_USER: ${POSTGRES_USER:-demo}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-demo}
+      ARTIFACT_ROOT: /data/artifacts
+    ports:
+      - "8000:8000"
+    volumes:
+      - artifact_data:/data/artifacts
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ${POSTGRES_DB:-transcription_demo}
+      DATABASE_USER: ${POSTGRES_USER:-demo}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-demo}
+      ARTIFACT_ROOT: /data/artifacts
+      WORKER_POLL_INTERVAL_SECONDS: "2"
+    volumes:
+      - artifact_data:/data/artifacts
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  artifact_data:
