@@ -1,6 +1,6 @@
 # Audio Transcription Platform Demo
 
-[![CI](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml)
+[![CI](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml?query=branch%3Amain)
 
 A sanitized public demo of an async AI transcription pipeline:
 
