@@ -1,5 +1,7 @@
 # Audio Transcription Platform Demo
 
+[![CI](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/artefex/audio-transcription-platform-demo/actions/workflows/ci.yml)
+
 A sanitized public demo of an async AI transcription pipeline:
 
 ```mermaid
@@ -117,15 +119,19 @@ curl "http://localhost:8000/api/transcripts/<transcript_id>"
 Python API/core/worker tests:
 
 ```bash
+python3 -m pip install -e ".[dev]"
 python3 -m pytest
 ```
 
-Frontend tests:
+Frontend checks:
 
 ```bash
 cd apps/web
-npm install
+npm ci
+npm run lint
+npm run typecheck
 npm run test
+npm run build
 ```
 
 Docker verification:
@@ -134,9 +140,10 @@ Docker verification:
 docker compose up --build
 ```
 
-## Public Safety
+## Public Demo / Privacy Note
 
-This workspace was created as a fresh sanitized demo and does not preserve private repo history. It excludes private corpus, persona, career, operations, cloud infra, local database, generated log, trace, cache, and nested repo material. See `SANITIZATION_REPORT.md` for the verification checklist and remaining caveats.
+This repository is a clean public demo inspired by a private internal project. It was created in a fresh workspace with no original git history and does not include private source material, personal corpus data, RAIN/OpenClaw code, production infrastructure, deployment runbooks, secrets, logs, or local databases.
+The fake transcription provider is the default so the full workflow can run locally without external API keys.
 
 ## Future Work
 
